@@ -461,7 +461,7 @@ test_expect_success 'nested git work tree' '
 	! test -d bar
 '
 
-test_expect_failure 'should clean things that almost look like git but are not' '
+test_expect_success 'should clean things that almost look like git but are not' '
 	rm -fr almost_git almost_bare_git almost_submodule &&
 	mkdir -p almost_git/.git/objects &&
 	mkdir -p almost_git/.git/refs &&
@@ -474,8 +474,6 @@ test_expect_failure 'should clean things that almost look like git but are not' 
 	garbage
 	EOF
 	test_when_finished "rm -rf almost_*" &&
-	## This will fail due to die("Invalid gitfile format: %s", path); in
-	## setup.c:read_gitfile.
 	git clean -f -d &&
 	test_path_is_missing almost_git &&
 	test_path_is_missing almost_bare_git &&
@@ -507,7 +505,7 @@ test_expect_success 'should not clean submodules' '
 	test_path_is_missing to_clean
 '
 
-test_expect_failure 'nested (empty) git should be kept' '
+test_expect_success 'nested (empty) git should be kept' '
 	rm -fr empty_repo to_clean &&
 	git init empty_repo &&
 	mkdir to_clean &&
@@ -529,7 +527,7 @@ test_expect_success 'nested bare repositories should be cleaned' '
 	test_path_is_missing subdir
 '
 
-test_expect_success 'nested (empty) bare repositories should be cleaned even when in .git' '
+test_expect_failure 'nested (empty) bare repositories should be cleaned even when in .git' '
 	rm -fr strange_bare &&
 	mkdir strange_bare &&
 	git init --bare strange_bare/.git &&
