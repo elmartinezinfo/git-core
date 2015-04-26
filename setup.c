@@ -364,6 +364,10 @@ const char *read_gitfile_gently(const char *path, int *return_error_code)
 		error_code = READ_GITFILE_ERR_OPEN_FAILED;
 		goto cleanup_return;
 	}
+	if (st.st_size > PATH_MAX * 4) {
+		error_code = READ_GITFILE_ERR_TOO_LARGE;
+		goto cleanup_return;
+	}
 	buf = xmalloc(st.st_size + 1);
 	len = read_in_full(fd, buf, st.st_size);
 	close(fd);
@@ -418,6 +422,8 @@ cleanup_return:
 			return NULL;
 		case READ_GITFILE_ERR_OPEN_FAILED:
 			die_errno("Error opening '%s'", path);
+		case READ_GITFILE_ERR_TOO_LARGE:
+			die("Too large to be a .git file: '%s'", path);
 		case READ_GITFILE_ERR_READ_FAILED:
 			die("Error reading %s", path);
 		case READ_GITFILE_ERR_INVALID_FORMAT:
